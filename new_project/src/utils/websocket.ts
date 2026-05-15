@@ -93,13 +93,19 @@ class WebSocketManager {
         this.store.setRuleGenerationProgress(0)
         this.store.setWorkflowErrorMessage(message.message || '规则生成失败')
         //this.store.triggerRuleGenerationFailed(message.message || '规则生成失败')
-        console.log("Show ErrorMessage:",this.store.workflowErrorMessage)
+        console.log("Show RuleGeneration ErrorMessage:",this.store.workflowErrorMessage)
         this.store.navigateTo('/workflows')
         break
       case 'test_phase_update':
         this.store.setCurrentTestPhase(message.phase)
         this.store.setTestProgress(message.progress)
         break
+      case'test_error':
+        this.store.setTestProgress(0)
+        this.store.setWorkflowErrorMessage(message.message || '规则生成失败')
+        this.store.navigateTo('/workflows')
+        console.log("Show Test ErrorMessage:",this.store.workflowErrorMessage)
+        break;
       case 'test_complete':
         this.store.setTestProgress(100)
         console.log('Test complete, navigating to /test')

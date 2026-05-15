@@ -3,7 +3,7 @@ export interface Rule {
   workflowId: string
   content: string
   protocol: string
-  status: 'pending' | 'approved'
+  status: 'pending' | 'accepted'
   targetPacket: string
 }
 export interface TestedRule{
@@ -11,7 +11,7 @@ export interface TestedRule{
   workflowId: string
   content: string
   protocol: string
-  status:  'approved'
+  status:  'accepted'
   hitPacket: string[]
 }
 
@@ -83,6 +83,14 @@ export interface TestPhaseUpdateMessage {
   duration: number
 }
 
+
+export interface TestErrorMessage {
+  type: 'test_error'
+  workflowId: string
+  errorCode: string
+  message: string
+}
+
 export interface TestCompleteMessage {
   type: 'test_complete'
   workflowId: string
@@ -94,6 +102,7 @@ export type WebSocketMessage =
   | RuleGenerationErrorMessage
   | TestPhaseUpdateMessage
   | TestCompleteMessage
+  | TestErrorMessage
 
 export type SubscribeType =
   | 'rule_generation_progress'
@@ -101,6 +110,7 @@ export type SubscribeType =
   | 'rule_generation_error'
   | 'test_phase_update'
   | 'test_complete'
+    |'tets_error'
 
 export interface SubscribeRequest {
   type: 'subscribe'

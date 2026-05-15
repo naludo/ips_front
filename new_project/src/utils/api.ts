@@ -162,7 +162,7 @@ export async function updateRule(ruleId: string, content: string): Promise<ApiRe
  * @returns 审核后的规则列表
  */
 export async function batchApproveRules(ruleIds: string[]): Promise<ApiResponse<{
-  rules: Array<{ id: string; status: 'approved' }>
+  rules: Array<{ id: string; status: 'accepted' }>
 }>> {
   const response = await api.post('/rules/approve', { ruleIds })
   console.log('batchApproveRules', response)

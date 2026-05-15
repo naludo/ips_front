@@ -26,7 +26,7 @@ let ruleGenerationCompleteCallback: (() => void) | null = null
 //let ruleGenerationFailedCallback: ((errorMessage: string) => void) | null = null
 
 export function useWorkflowStore() {
-  const approvedRules = computed(() => rules.value.filter(r => r.status === 'approved'))
+  const approvedRules = computed(() => rules.value.filter(r => r.status === 'accepted'))
   const pendingRules = computed(() => rules.value.filter(r => r.status === 'pending'))
 
   // // 当前是否有运行中的工作流
@@ -213,7 +213,7 @@ export function useWorkflowStore() {
       // case 'cancelled':
       //   return '/workflow'
       default:
-        return '/'
+        return '/workflows'
     }
   }
 

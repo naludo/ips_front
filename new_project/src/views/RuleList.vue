@@ -344,7 +344,7 @@ const currentTestPhaseLabel = computed(() => {
 const filterTabs = [
   { label: '全部', value: 'all' },
   { label: '待审核', value: 'pending' },
-  { label: '已通过', value: 'approved' }
+  { label: '已通过', value: 'accepted' }
 ]
 
 /**
@@ -363,7 +363,7 @@ const pendingRules = computed(() => rules.value.filter(r => r.status === 'pendin
 /**
  * 计算属性：已通过规则数量
  */
-const approvedRules = computed(() => rules.value.filter(r => r.status === 'approved'))
+const approvedRules = computed(() => rules.value.filter(r => r.status === 'accepted'))
 
 /**
  * 导航跳转方法
@@ -382,7 +382,7 @@ function navigateTo(path: string): void {
 function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
     pending: '待审核',
-    approved: '已通过'
+    accepted: '已通过'
   }
   return labels[status] || status
 }

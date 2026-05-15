@@ -136,8 +136,7 @@
               规则
             </button>
             <button
-              v-if="['pending' ,'analyzing','analyzed', 'generating' ,'generated',
-    'loading','loaded','replaying','replayed','verifying'].includes(workflow.status)"
+              v-if="['pending','generating' ,'generated'].includes(workflow.status)"
               class="action-btn continue"
               @click="continueWorkflow(workflow)"
             >
@@ -230,7 +229,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn-secondary" @click="showWorkflowModal = false">关闭</button>
-            <button class="btn-primary" @click="selectedWorkflow&&viewRules(selectedWorkflow?.workflowId">查看规则</button>
+            <button class="btn-primary" @click="selectedWorkflow&&viewRules(selectedWorkflow?.workflowId)">查看规则</button>
           </div>
         </div>
       </div>
