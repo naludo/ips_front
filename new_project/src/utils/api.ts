@@ -126,7 +126,7 @@ export async function getRules(
  * @returns 生成结果消息和生成的规则数量
  */
 export async function generateRules(workflowId: string): Promise<ApiResponse<{ message: string; }>> {
-  const response = await api.post('/rules/generate', { workflowId })
+  const response = await api.post(`/workflows/${workflowId}/start`)
   console.log('generateRules', response)
   return response.data
 }
@@ -175,7 +175,7 @@ export async function batchApproveRules(ruleIds: string[]): Promise<ApiResponse<
  * @returns 空响应
  */
 export async function startTest(workflowId: string): Promise<ApiResponse<null>> {
-  const response = await api.post(`/workflow/${workflowId}/test/start`)
+  const response = await api.post(`/workflows/${workflowId}/test/start`)
   console.log('startTest', response)
   return response.data
 }
@@ -186,7 +186,7 @@ export async function startTest(workflowId: string): Promise<ApiResponse<null>> 
  * @returns 测试结果详情
  */
 export async function getTestResult(workflowId: string): Promise<ApiResponse<TestResult>> {
-  const response = await api.get(`/workflow/${workflowId}/result`)
+  const response = await api.get(`/workflows/${workflowId}/result`)
   console.log('getTestResult', response)
   return response.data
 }

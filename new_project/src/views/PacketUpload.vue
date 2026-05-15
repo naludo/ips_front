@@ -312,6 +312,7 @@ async function handleUpload(): Promise<void> {
       // 上传成功，保存工作流ID和文件名
       uploadedFileName.value = selectedFile.value.name
       store.setCurrentWorkflowId(response.data.workflowId)
+      //sessionStorage.setItem("currentWorkflowId", workflow.workflowId)(应该用response)
       // 记录最后成功步骤
       store.setLastStep('upload')
       // 建立WebSocket连接监听进度

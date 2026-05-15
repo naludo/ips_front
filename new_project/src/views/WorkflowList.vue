@@ -321,7 +321,13 @@ const route = useRoute()
 
 // 获取状态管理store
 const store = useWorkflowStore()
-
+if(!store.currentWorkflowId.value){
+  const store_id=sessionStorage.getItem('currentWorkflowId')
+  if(store_id){
+    console.log('store_id',store_id)
+    store.setCurrentWorkflowId(store_id)
+  }
+}
 // 响应式状态变量
 const currentPath = ref(route.path)          // 当前路由路径
 const workflows = ref<Workflow[]>([])         // 工作流列表
@@ -341,8 +347,8 @@ const navItems = [
   { path: '/', label: '首页', icon: { viewBox: '0 0 24 24', path: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z' } },
   { path: '/upload', label: '新建任务', icon: { viewBox: '0 0 24 24', path: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4' } },
   { path: '/workflows', label: '工作流管理', icon: { viewBox: '0 0 24 24', path: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z' } },
-  { path: '/rules', label: '规则列表', icon: { viewBox: '0 0 24 24', path: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' } },
-  { path: '/test', label: '测试结果', icon: { viewBox: '0 0 24 24', path: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z' } }
+  { path: `/rules/${store.currentWorkflowId.value}`, label: '规则列表', icon: { viewBox: '0 0 24 24', path: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' } },
+  { path: `/test/${store.currentWorkflowId.value}`, label: '测试结果', icon: { viewBox: '0 0 24 24', path: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z' } }
 ]
 
 /**
@@ -421,6 +427,7 @@ async function loadWorkflows(): Promise<void> {
 async function checkForWorkflowErrors(): Promise<void> {
   // 获取当前工作流ID
   const currentWfId = store.getCurrentWorkflowId()
+  console.log("currentWorkFlowId",currentWfId)
   
   // 如果没有当前工作流，不检查
   if (!currentWfId) return
