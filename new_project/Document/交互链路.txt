@@ -1,0 +1,89 @@
+
+阶段1：PCAP文件上传（uploading）
+用户点击「选择文件」
+    ↓
+PacketUpload.vue (文件选择)
+    ↓
+选择PCAP文件 → 点击文件上传或重新上传
+    ↓
+触发uploadFile(）函数功能
+    ↓
+调用POST /api/workflows/upload接口
+    ↓
+文件上传成功 ，拿到后端创建的workflowid
+    ↓
+获取workflowId → 建立WebSocket连接
+    ↓
+WebSocket: ws://host/ws/workflows/{workflowId}，连接成功回调函数订阅消息列表{subscribeTypes: [
+          'rule_generation_progress',   // 规则生成进度
+          'rule_generation_complete',  // 规则生成完成
+          'rule_generation_error',     // 规则生成错误
+          'test_phase_update',         // 测试阶段更新
+          'test_complete'              // 测试完成
+        ]}
+    ↓
+界面显示「开始生成规则」按钮
+
+
+
+
+
+阶段2：规则生成(generating)
+用户点击「开始生成规则」
+    ↓
+触发startRuleGeneration()函数功能
+    ↓
+调用POST /api/rules/generate (REST)接口
+    ↓
+WebSocket接收: rule_generation_progress(analyzing,generating)
+    ↓
+实时更新进度 → 进度条展示
+    ↓
+WebSocket接收: rule_generation_complete
+    ↓
+自动跳转 → RuleList.vue
+
+
+
+
+阶段3：规则审查
+用户操作（通过/拒绝/编辑/重新生成）
+    ↓
+在RuleList.vue 触发对应方法
+    ↓
+调用后端接口批量审核
+    ↓
+对于不满意的规则调用后端（编辑/重新生成）
+    ↓
+PUT /api/rules/{ruleId} (编辑规则内容)
+PUT /api/rules/regenerate (重新生成规则，支持批量)
+    ↓
+响应数据更新前端规则列表
+    ↓
+规则状态变化:对于重新生成的规则，后端将状态重置为pending,前端同步
+
+
+
+
+阶段4：回放测试(testig)
+用户点击「开始回放测试」
+    ↓
+触发startTest()函数
+    ↓
+筛选审核通过的规则 → 获取ruleIds列表
+    ↓
+POST /api/test/start (workflowId, ruleIds)
+    ↓
+WebSocket接收:  test_phase_update   {loading,replay,testing}
+    ↓
+实时更新测试进度和阶段状态
+    ↓
+WebSocket接收: test_complete
+    ↓
+GET /api/test/{workflowId}/result (REST)
+    ↓
+跳转 → TestResult.vue 展示测试结果
+    ↓
+安全关闭WebSocket连接,workflow状态变更为completed
+
+

@@ -1,0 +1,40 @@
+{
+  "name": "ips-test-system",
+  "version": "1.0.0",
+  "description": "IPS测试系统前端应用",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:msw": "jest --config jest.config.cjs",
+    "test:msw:watch": "jest --config jest.config.cjs --watch"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "element-plus": "^2.6.3",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.12.7",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/test-utils": "^2.4.5",
+    "jest": "^30.4.0",
+    "msw": "^2.14.4",
+    "sass": "^1.75.0",
+    "ts-jest": "^29.4.9",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10",
+    "vitest": "^1.5.2",
+    "vue-tsc": "^2.0.14"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}
