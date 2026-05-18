@@ -135,6 +135,17 @@
               </svg>
               规则
             </button>
+            <!-- 结果按钮 - 仅 completed 状态可见 -->
+            <button
+                v-if="workflow.status === 'completed'"
+                class="action-btn result"
+                @click="viewTestResult(workflow.workflowId)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              结果
+            </button>
             <button
               v-if="['pending','generating' ,'generated'].includes(workflow.status)"
               class="action-btn continue"
@@ -157,6 +168,19 @@
                 <path d="M9 15h6"/>
               </svg>
               结束
+            </button>
+            <!-- 删除按钮 - 仅 completed/cancelled/failed 状态可见 -->
+            <button
+                v-if="['completed','cancelled','failed'].includes(workflow.status)"
+                class="action-btn delete"
+                @click="deleteWorkflowById(workflow.workflowId)"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+              </svg>
+              删除
             </button>
           </div>
         </div>
@@ -311,7 +335,7 @@
  */
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { getWorkflows, getWorkflow, getWorkflowError, endWorkflow } from '@/utils/api'
+import { getWorkflows, getWorkflow, getWorkflowError, endWorkflow,deleteWorkflow } from '@/utils/api'
 import { useWorkflowStore } from '@/stores/workflow'
 import type { Workflow, ErrorMessage } from '@/types'
 
@@ -547,6 +571,31 @@ async function endWorkflowById(workflowId: string): Promise<void> {
     errorMessage.value = '结束工作流失败'
     console.error('End workflow error:', error)
   }
+}
+/**
+ * 删除工作流
+ * @param workflowId 工作流ID
+ */
+async function deleteWorkflowById(workflowId: string): Promise<void> {
+  if (!confirm('确定要删除此工作流吗？此操作不可撤销。')) return
+  try {
+    const response = await deleteWorkflow(workflowId)
+    if (response.code === 200) {
+      errorMessage.value = '工作流已删除'
+      loadWorkflows()
+    }
+  } catch (error) {
+    errorMessage.value = '删除工作流失败'
+    console.error('Delete workflow error:', error)
+  }
+}
+
+/**
+ * 跳转到测试结果页面
+ * @param workflowId 工作流ID
+ */
+function viewTestResult(workflowId: string): void {
+  router.push(`/test/${workflowId}`)
 }
 
 /**
@@ -955,6 +1004,23 @@ onMounted(() => {
 
         &:hover {
           background: #ffccc7;
+        }
+      }
+      &.delete {
+        background: #fff2f0;
+        color: #ff4d4f;
+
+        &:hover {
+          background: #ffccc7;
+        }
+      }
+
+      &.result {
+        background: #f6ffed;
+        color: #52c41a;
+
+        &:hover {
+          background: #d9f7be;
         }
       }
     }

@@ -34,10 +34,10 @@
         </div>
         <div class="workflow-selector">
           <span>选择工作流:</span>
-          <select v-model="displayWorkflowId" @change="onWorkflowChange">
+          <select v-model="displayWorkflowId" @change="onWorkflowChange" class="workflow-select">
             <option value="">请选择工作流</option>
             <option v-for="wf in workflows" :key="wf.workflowId" :value="wf.workflowId">
-              {{ wf.fileName }}
+              {{ formatWorkflowDisplay(wf) }}
             </option>
           </select>
         </div>
@@ -66,6 +66,10 @@
           <div class="stat-item approved">
             <span class="stat-value">{{ approvedRules.length }}</span>
             <span class="stat-label">已通过</span>
+          </div>
+          <div class="stat-item error">
+            <span class="stat-value">{{ errorRules.length }}</span>
+            <span class="stat-label">错误</span>
           </div>
         </div>
 
@@ -117,6 +121,7 @@
               <input
                 type="checkbox"
                 :checked="selectedRules.includes(rule.id)"
+                :disabled="rule.status !=='pending'"
                 @change="toggleSelectRule(rule.id)"
                 class="rule-checkbox"
               />
@@ -204,16 +209,16 @@
         <button class="close-error" @click="errorMessage = ''">×</button>
       </div>
 
-<!--      <div v-if="showTestProgress" class="test-progress-overlay">-->
-<!--        <div class="test-progress-card">-->
-<!--          <h3>规则测试进度</h3>-->
-<!--          <div class="progress-bar-container">-->
-<!--            <div class="progress-bar" :style="{ width: testProgress + '%' }"></div>-->
-<!--          </div>-->
-<!--          <span class="progress-text">{{ testProgress }}%</span>-->
-<!--          <span class="phase-text">当前阶段: {{ currentTestPhaseLabel }}</span>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div v-if="showTestProgress" class="test-progress-overlay">
+        <div class="test-progress-card">
+          <h3>规则测试进度</h3>
+          <div class="progress-bar-container">
+            <div class="progress-bar" :style="{ width: testProgress + '%' }"></div>
+          </div>
+          <span class="progress-text">{{ testProgress }}%</span>
+          <span class="phase-text">当前阶段: {{ currentTestPhaseLabel }}</span>
+        </div>
+      </div>
 
       <!-- 重新生成规则弹窗 -->
       <div v-if="showRegenerateModal" class="modal-overlay" @click="closeRegenerateModal">
@@ -350,7 +355,8 @@ const currentTestPhaseLabel = computed(() => {
 const filterTabs = [
   { label: '全部', value: 'all' },
   { label: '待审核', value: 'pending' },
-  { label: '已通过', value: 'accepted' }
+  { label: '已通过', value: 'accepted' },
+  {label:'错误',value:'error'}
 ]
 
 /**
@@ -372,6 +378,12 @@ const pendingRules = computed(() => rules.value.filter(r => r.status === 'pendin
 const approvedRules = computed(() => rules.value.filter(r => r.status === 'accepted'))
 
 /**
+ * 计算属性：发生错误的规则数量
+ */
+
+const errorRules = computed(() => rules.value.filter(r => r.status === 'error'))
+
+/**
  * 导航跳转方法
  * @param path 目标路由路径
  */
@@ -388,9 +400,27 @@ function navigateTo(path: string): void {
 function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
     pending: '待审核',
-    accepted: '已通过'
+    accepted: '已通过',
+    error:'错误规则'
   }
   return labels[status] || status
+}
+
+/**
+ * 格式化工作流显示文本
+ * @param workflow 工作流对象
+ * @returns 格式化后的显示文本（文件名 + 创建时间）
+ */
+function formatWorkflowDisplay(workflow: Workflow): string {
+  const date = new Date(workflow.createTime)
+  const formattedDate = date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+  return `${workflow.fileName} (${formattedDate})`
 }
 
 /**
@@ -812,17 +842,20 @@ onMounted(() => {
       color: #666;
     }
 
-    select {
+    .workflow-select {
       padding: 8px 16px;
       border: 1px solid #ddd;
       border-radius: 6px;
       font-size: 14px;
       background: white;
       cursor: pointer;
+      min-width: 350px;
+      max-width: 500px;
 
       &:focus {
         outline: none;
         border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
     }
   }

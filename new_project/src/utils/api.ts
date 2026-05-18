@@ -86,6 +86,16 @@ export async function getWorkflowError(workflowId: string): Promise<ApiResponse<
 }
 
 /**
+ * 删除工作流
+ * @param workflowId 工作流ID
+ * @returns 空响应
+ */
+export async function deleteWorkflow(workflowId: string): Promise<ApiResponse<null>> {
+  const response = await api.post(`/workflows/${workflowId}/delete`)
+  console.log('deleteWorkflow', response)
+  return response.data
+}
+/**
  * 结束工作流
  * @param workflowId 工作流ID
  * @returns 空响应
@@ -95,6 +105,7 @@ export async function endWorkflow(workflowId: string): Promise<ApiResponse<null>
   console.log('endWorkflow', response)
   return response.data
 }
+
 
 /**
  * 获取规则列表

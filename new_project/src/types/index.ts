@@ -3,7 +3,7 @@ export interface Rule {
   workflowId: string
   content: string
   protocol: string
-  status: 'pending' | 'accepted'
+  status: 'pending' | 'accepted'|'error'
   targetPacket: string
 }
 export interface TestedRule{

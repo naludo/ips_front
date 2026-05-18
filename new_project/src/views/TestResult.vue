@@ -34,10 +34,10 @@
         </div>
         <div class="workflow-selector">
           <span>选择工作流:</span>
-          <select v-model="displayWorkflowId" @change="onWorkflowChange">
+          <select v-model="displayWorkflowId" @change="onWorkflowChange" class="workflow-select">
             <option value="">请选择工作流</option>
             <option v-for="wf in workflows" :key="wf.workflowId" :value="wf.workflowId">
-              {{ wf.fileName }}
+              {{ formatWorkflowDisplay(wf) }}
             </option>
           </select>
         </div>
@@ -448,6 +448,23 @@ function formatDuration(seconds: number): string {
 }
 
 /**
+ * 格式化工作流显示文本
+ * @param workflow 工作流对象
+ * @returns 格式化后的显示文本（文件名 + 创建时间）
+ */
+function formatWorkflowDisplay(workflow: Workflow): string {
+  const date = new Date(workflow.createTime)
+  const formattedDate = date.toLocaleString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+  return `${workflow.fileName} (${formattedDate})`
+}
+
+/**
  * 计算属性：命中角度（用于饼图）
  */
 const hitAngle = computed(() => {
@@ -837,17 +854,20 @@ onMounted(() => {
       color: #666;
     }
 
-    select {
+    .workflow-select {
       padding: 8px 16px;
       border: 1px solid #ddd;
       border-radius: 6px;
       font-size: 14px;
       background: white;
       cursor: pointer;
+      min-width: 350px;
+      max-width: 500px;
 
       &:focus {
         outline: none;
         border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
     }
   }
